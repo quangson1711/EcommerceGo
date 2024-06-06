@@ -10,5 +10,8 @@
 build:
 	go build -o bin/com cmd/main.go
 
+test:
+	go test -v ./...
+
 run: build
 	go run cmd/main.go
