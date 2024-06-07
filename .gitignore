@@ -20,3 +20,16 @@
 # Go workspace file
 go.work
 go.work.sum
+/.idea/.gitignore
+/cmd/migrate/migrations/20240607154822_add-user-table.down.sql
+/cmd/migrate/migrations/20240607154822_add-user-table.up.sql
+/cmd/migrate/migrations/20240607155040_add-product-table.down.sql
+/cmd/migrate/migrations/20240607155040_add-product-table.up.sql
+/cmd/migrate/migrations/20240607155111_add-orders-table.down.sql
+/cmd/migrate/migrations/20240607155111_add-orders-table.up.sql
+/cmd/migrate/migrations/20240607155136_add-order-items-table.down.sql
+/cmd/migrate/migrations/20240607155136_add-order-items-table.up.sql
+/bin/com
+/.idea/EcommerceGo.iml
+/.idea/modules.xml
+/.idea/vcs.xml
