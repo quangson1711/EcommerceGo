@@ -5,6 +5,7 @@ import (
 	"Ecommerce-Go/types"
 	"Ecommerce-Go/utils"
 	"fmt"
+	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 	"net/http"
 )
@@ -29,13 +30,20 @@ func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	var payload types.RegisterUserPayload
 
-	err := utils.ParseJson(r, payload)
-	if err != nil {
+	if err := utils.ParseJson(r, &payload); err != nil {
 		utils.WirteError(w, http.StatusBadRequest, err)
 		return
 	}
 
-	_, err = h.store.GetUserByEmail(payload.Email)
+	// validate the payload
+	if err := utils.Validate.Struct(payload); err != nil {
+		errors := err.(validator.ValidationErrors)
+		utils.WirteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload: %v", errors))
+		return
+	}
+
+	// check if the user exists
+	_, err := h.store.GetUserByEmail(payload.Email)
 	if err == nil {
 		utils.WirteError(w, http.StatusBadRequest, fmt.Errorf("user with this email %s already exists", payload.Email))
 		return
@@ -60,5 +68,5 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.WirteJson(w, http.StatusOK, nil)
+	utils.WirteJson(w, http.StatusCreated, nil)
 }
