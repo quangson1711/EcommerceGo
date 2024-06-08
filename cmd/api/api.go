@@ -1,6 +1,7 @@
 package api
 
 import (
+	"Ecommerce-Go/cmd/service/product"
 	"Ecommerce-Go/cmd/service/user"
 	"database/sql"
 	"github.com/gorilla/mux"
@@ -28,6 +29,11 @@ func (s *APIServer) Run() error {
 	userHandler := user.NewHandler(userStore)
 
 	userHandler.RegisterRoutes(subrouter)
+
+	productStore := product.NewStore(s.db)
+	productHandler := product.NewHandler(productStore)
+
+	productHandler.RegisterRoutes(subrouter)
 
 	log.Println("Listening on", s.addr)
 

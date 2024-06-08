@@ -24,6 +24,43 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 }
 
 func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
+	var payload types.LoginUserPayload
+
+	if err := utils.ParseJson(r, &payload); err != nil {
+		utils.WirteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	// Validate the payload
+	if err := utils.Validate.Struct(payload); err != nil {
+		errors := err.(validator.ValidationErrors)
+		utils.WirteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload: %v", errors))
+		return
+	}
+
+	// check if the user exists
+	u, err := h.store.GetUserByEmail(payload.Email)
+
+	if err != nil {
+		utils.WirteError(w, http.StatusBadRequest, fmt.Errorf("invalid email or password"))
+		return
+	}
+
+	if !auth.CompareHashAndPassword(u.Password, payload.Password) {
+		utils.WirteError(w, http.StatusBadRequest, fmt.Errorf("invalid email or password"))
+		return
+	}
+
+	token, err := auth.CreateJWT(u.ID)
+
+	if err != nil {
+		utils.WirteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	response := types.NewLoginResponseBody(token)
+
+	utils.WirteJson(w, http.StatusOK, response)
 
 }
 
