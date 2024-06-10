@@ -13,6 +13,7 @@ type ProductStore interface {
 	GetProductByID(id int) (*Product, error)
 	GetProductByIDs(ids []int) ([]Product, error)
 	CreateProduct(Product) error
+	UpdateQuantityProduct(Product) error
 }
 
 type OrderStore interface {

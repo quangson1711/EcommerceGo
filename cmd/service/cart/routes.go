@@ -23,6 +23,8 @@ func (h *Handle) RegisterRoutes(router *mux.Router) {
 }
 
 func (h *Handle) handleCheckout(w http.ResponseWriter, r *http.Request) {
+	// TODO userID
+	userID := 0
 	var payload types.CartCheckoutPayload
 
 	if err := utils.ParseJson(r, &payload); err != nil {
@@ -51,7 +53,10 @@ func (h *Handle) handleCheckout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//TODO
-	h.createOrder(ps, payload.Items)
+	orderID, totalPrice, err := h.createOrder(ps, payload.Items, userID)
+
+	response := types.NewCheckoutCartResponseBody(totalPrice, orderID)
+
+	utils.WirteJson(w, http.StatusOK, response)
 
 }

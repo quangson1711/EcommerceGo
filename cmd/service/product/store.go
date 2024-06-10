@@ -101,3 +101,12 @@ func scanRowIntoProduct(rows *sql.Rows) (*types.Product, error) {
 
 	return p, nil
 }
+
+func (s *Store) UpdateQuantityProduct(product types.Product) error {
+
+	_, err := s.db.Exec("UPDATE products SET quantity = ? WHERE id = ?", product.Quantity, product.ID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
