@@ -12,6 +12,7 @@ import (
 func main() {
 
 	//envs := config.InitConfig()
+	config.SetupLogger()
 
 	db, err := db2.NewMySQLStorage(mysql.Config{
 		User:                 config.Envs.DBUser,
