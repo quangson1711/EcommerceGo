@@ -19,6 +19,24 @@ func getCartItemIDs(items []types.CartItem) ([]int, error) {
 }
 
 func (h *Handle) createOrder(ps []types.Product, items []types.CartItem, userID int) (int, float64, error) {
+	// Begin a transaction
+	tx, err := h.db.Begin()
+	if err != nil {
+		return 0, 0, err
+	}
+
+	// Ensure transaction is rolled back in case of an error or panic
+	defer func() {
+		if p := recover(); p != nil {
+			tx.Rollback()
+			panic(p) // re-throw panic after Rollback
+		} else if err != nil {
+			tx.Rollback() // err is non-nil; don't change it
+		} else {
+			err = tx.Commit() // err is nil; if Commit returns error update err
+		}
+	}()
+
 	// create map product to easy check id
 	productMap := make(map[int]types.Product)
 	for _, product := range ps {
@@ -52,7 +70,7 @@ func (h *Handle) createOrder(ps []types.Product, items []types.CartItem, userID 
 		Address: "Ngo Goc De",
 	}
 
-	err := h.store.CreateOrder(&order)
+	err = h.store.CreateOrder(&order)
 	if err != nil {
 		return 0, 0, err
 	}

@@ -4,6 +4,7 @@ import (
 	"Ecommerce-Go/cmd/service/auth"
 	"Ecommerce-Go/types"
 	"Ecommerce-Go/utils"
+	"database/sql"
 	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
@@ -14,10 +15,11 @@ type Handle struct {
 	store        types.OrderStore
 	productStore types.ProductStore
 	userStore    types.UserStore
+	db           *sql.DB
 }
 
-func NewHandle(store types.OrderStore, productStore types.ProductStore, userStore types.UserStore) *Handle {
-	return &Handle{store, productStore, userStore}
+func NewHandle(store types.OrderStore, productStore types.ProductStore, userStore types.UserStore, db *sql.DB) *Handle {
+	return &Handle{store, productStore, userStore, db}
 }
 
 func (h *Handle) RegisterRoutes(router *mux.Router) {
