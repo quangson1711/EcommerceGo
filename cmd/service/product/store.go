@@ -34,7 +34,18 @@ func (s *Store) GetProducts() ([]types.Product, error) {
 }
 
 func (s *Store) GetProductByIDs(ids []int) ([]types.Product, error) {
-	rows, err := s.db.Query("SELECT * FROM products WHERE id IN (?)", ids)
+
+	// Create a slice of placeholders
+	placeholders := make([]string, len(ids))
+	args := make([]interface{}, len(ids))
+	for i, id := range ids {
+		placeholders[i] = "?"
+		args[i] = id
+	}
+
+	query := fmt.Sprintf("SELECT * FROM products WHERE id IN (%s)", strings.Join(placeholders, ","))
+
+	rows, err := s.db.Query(query, args...)
 	if err != nil {
 		return nil, err
 	}

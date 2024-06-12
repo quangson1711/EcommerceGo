@@ -21,7 +21,7 @@ func NewHandle(store types.OrderStore, productStore types.ProductStore, userStor
 }
 
 func (h *Handle) RegisterRoutes(router *mux.Router) {
-	router.HandleFunc("cart/checkout", auth.WithJWTAuth(h.handleCheckout, h.userStore)).Methods(http.MethodPost)
+	router.HandleFunc("/cart/checkout", auth.WithJWTAuth(h.handleCheckout, h.userStore)).Methods(http.MethodPost)
 }
 
 func (h *Handle) handleCheckout(w http.ResponseWriter, r *http.Request) {

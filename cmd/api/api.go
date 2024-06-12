@@ -1,6 +1,8 @@
 package api
 
 import (
+	"Ecommerce-Go/cmd/service/cart"
+	"Ecommerce-Go/cmd/service/order"
 	"Ecommerce-Go/cmd/service/product"
 	"Ecommerce-Go/cmd/service/user"
 	"database/sql"
@@ -34,6 +36,10 @@ func (s *APIServer) Run() error {
 	productHandler := product.NewHandler(productStore)
 
 	productHandler.RegisterRoutes(subrouter)
+
+	orderStore := order.NewStore(s.db)
+	cartHandler := cart.NewHandle(orderStore, productStore, userStore)
+	cartHandler.RegisterRoutes(subrouter)
 
 	log.Println("Listening on", s.addr)
 

@@ -9,7 +9,6 @@ import (
 	"github.com/golang-jwt/jwt"
 	"log"
 	"net/http"
-	"strconv"
 	"time"
 )
 
@@ -54,9 +53,8 @@ func WithJWTAuth(handlerFunc http.HandlerFunc, store types.UserStore) http.Handl
 
 		// if is we need to fetch the userID from the DB (id from the token)
 		claims := token.Claims.(jwt.MapClaims)
-		str := claims["userID"].(string)
-
-		userID, _ := strconv.Atoi(str)
+		str := claims["userID"].(float64)
+		userID := int(str)
 
 		u, err := store.GetUserByID(userID)
 		if err != nil {
