@@ -5,6 +5,7 @@ import (
 	"Ecommerce-Go/cmd/service/order"
 	"Ecommerce-Go/cmd/service/product"
 	"Ecommerce-Go/cmd/service/user"
+	"Ecommerce-Go/middleware"
 	"database/sql"
 	"github.com/gorilla/mux"
 	"log"
@@ -25,6 +26,14 @@ func NewApiServer(addr string, db *sql.DB) *APIServer {
 
 func (s *APIServer) Run() error {
 	router := mux.NewRouter()
+
+	//Log all request response
+	// Define your routes
+	router.HandleFunc("/", HomeHandler).Methods("GET")
+
+	// Add the logging middleware
+	router.Use(middleware.LoggingMiddleware)
+
 	subrouter := router.PathPrefix("/api").Subrouter()
 
 	userStore := user.NewStore(s.db)
@@ -44,4 +53,8 @@ func (s *APIServer) Run() error {
 	log.Println("Listening on", s.addr)
 
 	return http.ListenAndServe(s.addr, router)
+}
+
+func HomeHandler(w http.ResponseWriter, r *http.Request) {
+
 }
